@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
@@ -8,6 +7,8 @@ from sklearn.tree import DecisionTreeClassifier
 from AUC import  AUC_intervals
 from check_dataset import readDataset
 
+print("Test for dataset heart-disease")
+print()
 data = readDataset('datasetUCI/heart.csv')
 X = data.drop('target', axis =1)
 Y = data['target']
@@ -69,16 +70,16 @@ def classifier_M():
     else:
         return "Belongs to the subordinate class"
 
-
-knn_p = KNN_clasifier_predict(15)
+k_neightbors = 5
+knn_p = KNN_clasifier_predict(k_neightbors)
 tree = DecisionTree_classifier_predict()
 gaussian = GaussianNativeBayes_predict()
 class_M = classifier_M()
 
-print("AUC KNN: ", AUC_intervals(Y_test, knn_p))
+print("AUC KNN (k =",k_neightbors,'):' , AUC_intervals(Y_test, knn_p))
 print("AUC Decision Tree: ", AUC_intervals(Y_test, tree))
 print("AUC Gausian Native Bayes: ", AUC_intervals(Y_test, gaussian))
-print("AUC Classifier M: ", classifier_M())
+print("Classifier M: ", classifier_M())
 
 
 

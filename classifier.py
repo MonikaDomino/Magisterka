@@ -5,7 +5,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.tree import DecisionTreeClassifier
-from boostrap_AUC import boostrap_ACC
+#from boostrap_AUC import boostrap_ACC
 
 # read data from file
 data = pd.read_csv('datasetUCI/heart.csv')
@@ -27,41 +27,62 @@ X_test = pd.DataFrame(X_test_scaled)
 
 # classifiers - KNN, Decision Tree, Gausian Native Bayes
 
-def KNN_clasifier_predict (n, x_train, y_train, x_test):
-    knn = KNeighborsClassifier(n_neighbors=n)
+def KNN_clasifier_predict (n):
+    knn = KNeighborsClassifier(n_neighbors=n, metric='euclidean')
     knn.fit(X_train, Y_train)
-    knn_score = knn.predict_proba(x_test)
+    knn_score = knn.predict_proba(X_test)
     return knn_score
 
-def DecisionTree_classifier_predict (x_train, y_train, x_test):
+def DecisionTree_classifier_predict ():
     tre = DecisionTreeClassifier()
-    tre.fit(x_train, y_train)
-    tree_score = tre.predict_proba(x_test)
+    tre.fit(X_train, Y_train)
+    tree_score = tre.predict_proba(X_test)
     return tree_score
 
-def GaussianNativeBayes_predict (X_train, Y_train, x_test):
+def GaussianNativeBayes_predict ():
     gaussian = GaussianNB()
     gb = gaussian.fit(X_train, Y_train)
-    g_score = gb.predict_proba(x_test)
+    g_score = gb.predict_proba(X_test)
     return g_score
 
-
-gb = GaussianNativeBayes_predict(X_train, Y_train, X_test)
-tree = DecisionTree_classifier_predict(X_train, Y_train, X_test)
-knn = KNN_clasifier_predict(10, X_train, Y_train, X_test)
-
-def classifier_M (classifier):
+def classifier (classifier):
     p = []
-
     for i in classifier:
          p.append(i[0])
+    return p
 
-    if np.mean(p) > 0.5:
+def classifier_M():
+    array = []
+
+    # k for knn clasifiers
+
+    k = [1, 3, 5, 10, 15, 20, 30]
+
+    for j in k:
+        knn_k = KNN_clasifier_predict(j)
+        KNN_class = classifier(knn_k)
+        array.append(KNN_class)
+
+    gb = GaussianNativeBayes_predict()
+    tree = DecisionTree_classifier_predict()
+
+    g = classifier(gb)
+    t = classifier(tree)
+
+    array.append(g)
+    array.append(t)
+
+    print(np.mean(array))
+    if np.mean(array) > 0.5:
         return "Belongs to the main class"
     else:
         return "Belongs to the subordinate class"
 
-print("Classifier M for Gaussian Native Bayes: ", classifier_M(gb))
-print("Classifier M for Decision Tree: ", classifier_M(tree))
-print("Classifier M for KNN: ", classifier_M(knn))
+
+print(classifier_M())
+
+
+
+
+
 

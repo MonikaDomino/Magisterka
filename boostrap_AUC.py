@@ -7,7 +7,7 @@ def calculate_Z_score(alfa):
 
     return Z_score
 
-def boostrap_ACC (x_train, y_train, classifier):
+def boostrap_AUC (x_train, y_train, classifier):
     random_rng = np.random.RandomState()
     idx = np.arange(y_train.shape[0])
 

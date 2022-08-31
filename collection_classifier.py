@@ -18,17 +18,28 @@ def create_collection_classifier():
 
     return collection
 
-def Voting_Classifier(X_train, Y_train, X_test):
+def voting_classifier_hard (X_train, Y_train, X_test):
 
-    collection_VC = create_collection_classifier()
+    collection_VCH = create_collection_classifier()
 
-    vot_hard = VotingClassifier(estimators=collection_VC, voting='soft')
+    vot_hard = VotingClassifier(estimators=collection_VCH, voting='soft')
     vot_hard.fit(X_train, Y_train)
     pred = vot_hard.predict_proba(X_test)
 
     return pred
 
-def Stacking_Classifier (X_train, Y_train, X_test, k):
+def voting_classifier_soft (X_train, Y_train, X_test):
+
+    collection_VCS = create_collection_classifier()
+
+    vot_soft = VotingClassifier(estimators=collection_VCS, voting='soft')
+    vot_soft.fit(X_train, Y_train)
+    predS = vot_soft.predict_proba(X_test)
+
+    return predS
+
+
+def stacking_classifier (X_train, Y_train, X_test):
 
     collection_SC = create_collection_classifier()
 

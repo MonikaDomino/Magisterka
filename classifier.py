@@ -4,10 +4,9 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.tree import DecisionTreeClassifier
-from AUC import  AUC_intervals
+from AUC import AUC_intervals
 from check_dataset import readDataset
-from sklearn.ensemble import VotingClassifier
-
+from collection_classifier import Voting_Classifier, Stacking_Classifier
 print("Test for dataset heart-disease")
 print()
 data = readDataset('datasetUCI/heart.csv')
@@ -41,60 +40,54 @@ def GaussianNativeBayes_predict ():
     g_score = gb.predict_proba(X_test)
     return g_score
 
-def VotingClassifier_p(k):
 
-    gb = GaussianNB()
-    knn = KNeighborsClassifier(n_neighbors=k, metric='euclidean')
-    dt = DecisionTreeClassifier()
 
-    eclf = VotingClassifier(estimators=[('lr', gb), ('rf', knn), ('gnb', dt)], voting='soft')
-    eclfF = eclf.fit(X_train, Y_train)
-    elfP = eclfF.predict_proba(X_test)
-    return elfP
-
-def classifier_coefficient(classifier):
-    p = []
-    for i in classifier:
-         p.append(i[0])
-    return p
+# def classifier_coefficient(classifier):
+#     p = []
+#     for i in classifier:
+#          p.append(i[0])
+#     return p
 
 # def classifier_M():
 #
-#     collection = []
+collection = []
 #
-#     # k for knn clasifiers
+# k for knn clasifiers
 #
-#     k_neigh = [1, 3, 5, 10, 15, 20, 30]
+k_neigh = [1, 3, 5, 10, 15, 20, 30]
 #
-#     for j in k_neigh:
-#         knn_k = KNN_clasifier_predict(j)
-#         KNN_class = classifier_coefficient(knn_k)
-#         collection.append(KNN_class)
+for j in k_neigh:
+    knn_k = KNN_clasifier_predict(j)
+    #KNN_class = classifier_coefficient(knn_k)
+    #collection.append(KNN_class)
 #
-#     gb = GaussianNativeBayes_predict()
-#     tree = DecisionTree_classifier_predict()
-#
-#     collection.append(classifier_coefficient(gb))
-#     collection.append(classifier_coefficient(tree))
-#
+gb = GaussianNativeBayes_predict()
+tree = DecisionTree_classifier_predict()
+
+#collection.append(classifier_coefficient(gb))
+# collection.append(classifier_coefficient(tree))
+# #
 #     if np.mean(collection) > 0.5:
 #          return "Belongs to the main class"
 #     else:
 #         return "Belongs to the subordinate class"
 
-k_neightbors = 10
+k_neightbors = 3
 knn_p = KNN_clasifier_predict(k_neightbors)
 tree = DecisionTree_classifier_predict()
 gaussian = GaussianNativeBayes_predict()
+
 #class_M = classifier_M()
-group = VotingClassifier_p(k_neightbors)
+votC = Voting_Classifier(X_train,Y_train, X_test, k_neightbors)
+sC = Stacking_Classifier(X_train, Y_train, X_test, k_neightbors)
 
 
 print("AUC KNN (k =",k_neightbors,'):' , AUC_intervals(Y_test, knn_p))
 print("AUC Decision Tree: ", AUC_intervals(Y_test, tree))
 print("AUC Gausian Native Bayes: ", AUC_intervals(Y_test, gaussian))
-
-print("Multi: ", AUC_intervals(Y_test, group))
+print("")
+print("Voting Classier: ", AUC_intervals(Y_test, votC))
+print("Stacking Classifier: ", AUC_intervals(Y_test, sC))
 
 
 

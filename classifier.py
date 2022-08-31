@@ -78,7 +78,7 @@ tree = DecisionTree_classifier_predict()
 gaussian = GaussianNativeBayes_predict()
 
 #class_M = classifier_M()
-votC = Voting_Classifier(X_train,Y_train, X_test, k_neightbors)
+votC = Voting_Classifier(X_train,Y_train, X_test)
 sC = Stacking_Classifier(X_train, Y_train, X_test, k_neightbors)
 
 

@@ -3,16 +3,24 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 
+def create_collection_classifier():
 
-def Voting_Classifier(X_train, Y_train, X_test, k):
+    collection = []
 
-    collection_VC = []
+    collection.append(('DT', DecisionTreeClassifier(max_depth=3)))
+    collection.append(('gb', GaussianNB()))
 
-    collection_VC.append(('DT', DecisionTreeClassifier(max_depth=3)))
-    collection_VC.append(('gb', GaussianNB()))
+    k_neigh = [1, 3, 5, 10, 15, 20, 30]
 
-    knn_k = KNeighborsClassifier(n_neighbors=k)
-    collection_VC.append(('knn', knn_k))
+    for j in k_neigh:
+        knn_k = KNeighborsClassifier(n_neighbors=j)
+        collection.append(('knn[' + str(j) + ']', knn_k))
+
+    return collection
+
+def Voting_Classifier(X_train, Y_train, X_test):
+
+    collection_VC = create_collection_classifier()
 
     vot_hard = VotingClassifier(estimators=collection_VC, voting='soft')
     vot_hard.fit(X_train, Y_train)
@@ -22,13 +30,7 @@ def Voting_Classifier(X_train, Y_train, X_test, k):
 
 def Stacking_Classifier (X_train, Y_train, X_test, k):
 
-    collection_SC = []
-
-    collection_SC.append(('DT', DecisionTreeClassifier(max_depth=3)))
-    collection_SC.append(('gb', GaussianNB()))
-
-    knn_k = KNeighborsClassifier(n_neighbors=k)
-    collection_SC.append(('knn', knn_k))
+    collection_SC = create_collection_classifier()
 
     sc = StackingClassifier(estimators=collection_SC)
     sc.fit(X_train, Y_train)

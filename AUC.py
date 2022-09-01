@@ -1,6 +1,7 @@
 import numpy as np
+import pandas as pd
 from scipy.stats import norm
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, roc_auc_score
 
 
 def calculate_Z_score(alfa):
@@ -15,9 +16,7 @@ def AUC_intervals(y_test, score):
     se_auc = []
 
     for i in range(rounds):
-        preds = score[:, 1]
-        # roc_auc = roc_auc_score(y_test, preds, multi_class='ovr')
-        fpr, tpr, threshold = roc_curve(y_test, preds)
+        fpr, tpr, threshold = roc_curve(y_test, score)
         roc_auc = auc(fpr, tpr)
         auc_array.append(roc_auc)
 

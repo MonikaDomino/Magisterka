@@ -2,11 +2,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-import pandas as pd
-from sklearn.metrics import auc, roc_curve
+from sklearn import datasets
+
 
 from AUC import  AUC_intervals
-import numpy as np
+
 from check_dataset import readDataset_plik, readDataset_url
 from collection_classifier import voting_classifier_hard, stacking_classifier, voting_classifier_soft
 
@@ -16,7 +16,7 @@ data = readDataset_plik()
 X = data.drop('target', axis=1)
 Y = data['target']
 
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3)
 
 from sklearn.preprocessing import MinMaxScaler
 
@@ -38,14 +38,14 @@ X_test = scaler_min_max.transform(X_test)
 def KNN_clasifier_predict(k):
     knn = KNeighborsClassifier(n_neighbors=k, metric='euclidean')
     knn.fit(X_train, Y_train)
-    knn_score = knn.predict_proba(X_test)[:,1]
+    knn_score = knn.predict(X_test)
     return knn_score
 
 
 def DecisionTree_classifier_predict():
     tre = DecisionTreeClassifier(max_depth=3)
     tre.fit(X_train, Y_train)
-    tree_score = tre.predict_proba(X_test)[:,1]
+    tree_score = tre.predict(X_test)
 
     return tree_score
 
@@ -53,7 +53,7 @@ def DecisionTree_classifier_predict():
 def GaussianNativeBayes_predict():
     gaussian = GaussianNB()
     gb = gaussian.fit(X_train, Y_train)
-    g_score = gb.predict_proba(X_test)[:,1]
+    g_score = gb.predict(X_test)
     return g_score
 
 

@@ -25,7 +25,6 @@ def voting_classifier_hard (X_train, Y_train, X_test):
     vot_hard = VotingClassifier(estimators=collection_VCH, voting='soft')
     vot_hard.fit(X_train, Y_train)
     pred = vot_hard.predict_proba(X_test)[:,1]
-
     return pred
 
 def voting_classifier_soft (X_train, Y_train, X_test):

@@ -23,7 +23,7 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 
-# classifiers - KNN, Decision Tree, Gausian Native Bayes
+# classifiers - KNN, Decision Tree, Gausian Native Bayes, LogisticRegression
 
 def KNN_clasifier_predict(k):
     knn = KNeighborsClassifier(n_neighbors=k, metric='euclidean')

@@ -1,4 +1,5 @@
 from sklearn.ensemble import VotingClassifier, StackingClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
@@ -9,6 +10,7 @@ def create_collection_classifier():
 
     collection.append(('DT', DecisionTreeClassifier(max_depth=3)))
     collection.append(('gb', GaussianNB()))
+    collection.append(('lr', LogisticRegression(max_iter=3000)))
 
     k_neigh = [1, 3, 5, 10, 15, 20, 30]
 

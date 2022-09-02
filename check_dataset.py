@@ -39,7 +39,7 @@ def readDataset_bankoteAuthencation():
 
     return banknote
 
-def readDataset_onlineShopeersIntention():
+def readDataset_onlineShopeersIntention():  #class - Revenue
     print("Test for shoppers intention")
     print()
     shoopers = pd.read_csv("datasetUCI/online_shoppers_intention.csv")

@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import openpyxl
 
 # Breast Cancer Wisconsin - class [benign_0__mal_1]
 from sklearn.preprocessing import LabelEncoder
@@ -75,4 +76,37 @@ def readDataset_diabets(): # class[class]
 
     return ozone
 
+def readDataset_auditRisk():
+    print("Test for dataset audit risk")
+    print()
+    risk = pd.read_csv('datasetUCI/audit_risk.csv')
 
+    risk['Money_Value'] = risk['Money_Value'].fillna(risk['Money_Value'].mean())
+
+    location_dummies = pd.get_dummies(risk['LOCATION_ID'], prefix='location')
+    risk = pd.concat([risk, location_dummies], axis=1)
+    risk = risk.drop('LOCATION_ID', axis = 1)
+
+    #print(risk.info())
+
+    return risk
+
+def readDataset_MHR ():
+    print("Test for dataset MH risk")
+    print()
+
+    mh = pd.read_csv('datasetUCI/Maternal Health Risk Data Set.csv')
+
+    #print(mh.info())
+
+    return mh
+
+def readDataset_BT ():
+    print("Test for dataset BT risk")
+    print()
+
+    mh = pd.read_excel('datasetUCI/BreastTissue.xlsx')
+
+    #print(mh.info())
+
+    return mh

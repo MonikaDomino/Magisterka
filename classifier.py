@@ -9,10 +9,10 @@ import check_dataset
 from collection_classifier import voting_classifier_hard, stacking_classifier, voting_classifier_soft
 
 
-data = check_dataset.readDataset_onlineShopeersIntention()
+data = check_dataset.readDataset_BT()
 
-X = data.drop(['Revenue'], axis=1)
-Y = data['Revenue']
+X = data.drop(columns=['Class'], axis=1)
+Y = data['Class']
 
 
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3)
@@ -28,26 +28,26 @@ X_test = scaler.transform(X_test)
 def KNN_clasifier_predict(k):
     knn = KNeighborsClassifier(n_neighbors=k, metric='euclidean')
     knn.fit(X_train, Y_train)
-    knn_score = knn.predict_proba(X_test)[:,1]
+    knn_score = knn.predict_proba(X_test)
     return knn_score
 
 def LogisticRegression_predict():
     logic = LogisticRegression(max_iter=3000)
     logic.fit(X_train, Y_train)
-    logistic_score = logic.predict_proba(X_test)[:,1]
+    logistic_score = logic.predict_proba(X_test)
     return logistic_score
 
 def DecisionTree_classifier_predict():
     tre = DecisionTreeClassifier(max_depth=5)
     tre.fit(X_train, Y_train)
-    tree_score = tre.predict_proba(X_test)[:,1]
+    tree_score = tre.predict_proba(X_test)
     return tree_score
 
 
 def GaussianNativeBayes_predict():
     gaussian = GaussianNB()
     gb = gaussian.fit(X_train, Y_train)
-    g_score = gb.predict_proba(X_test)[:,1]
+    g_score = gb.predict_proba(X_test)
     return g_score
 
 

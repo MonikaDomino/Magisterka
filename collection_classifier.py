@@ -26,7 +26,7 @@ def voting_classifier_hard (X_train, Y_train, X_test):
 
     vot_hard = VotingClassifier(estimators=collection_VCH, voting='soft')
     vot_hard.fit(X_train, Y_train)
-    pred = vot_hard.predict_proba(X_test)
+    pred = vot_hard.predict_proba(X_test)[:,1]
     return pred
 
 def voting_classifier_soft (X_train, Y_train, X_test):
@@ -35,7 +35,7 @@ def voting_classifier_soft (X_train, Y_train, X_test):
 
     vot_soft = VotingClassifier(estimators=collection_VCS, voting='soft')
     vot_soft.fit(X_train, Y_train)
-    predS = vot_soft.predict_proba(X_test)
+    predS = vot_soft.predict_proba(X_test)[:,1]
 
     return predS
 
@@ -46,7 +46,7 @@ def stacking_classifier (X_train, Y_train, X_test):
 
     sc = StackingClassifier(estimators=collection_SC)
     sc.fit(X_train, Y_train)
-    sc_pred = sc.predict_proba(X_test)
+    sc_pred = sc.predict_proba(X_test)[:,1]
 
     return sc_pred
 

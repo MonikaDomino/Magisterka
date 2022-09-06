@@ -15,9 +15,9 @@ def AUC_intervals(y_test, score):
     se_auc = []
 
     for i in range(rounds):
-        fpr, tpr, threshold = roc_curve(y_test, score)
-        roc_auc = auc(fpr, tpr)
-        #roc_auc = roc_auc_score(y_test, score, multi_class='ovr')
+        # fpr, tpr, threshold = roc_curve(y_test, score)
+        # roc_auc = auc(fpr, tpr)
+        roc_auc = roc_auc_score(y_test, score, multi_class='ovr')
         auc_array.append(roc_auc)
 
         alfa = 0.05

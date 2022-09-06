@@ -8,11 +8,8 @@ from sklearn.linear_model import LogisticRegression
 import check_dataset
 from collection_classifier import voting_classifier_hard, stacking_classifier, voting_classifier_soft
 
-
-data = check_dataset.readDataset_parkinson()
-X = data.drop(columns=['status'], axis=1)
-Y = data['status']
-
+# read dataset
+X,Y = check_dataset.readDataset_onlineShopeersIntention()
 
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3)
 
@@ -37,7 +34,7 @@ def LogisticRegression_predict():
     return logistic_score
 
 def DecisionTree_classifier_predict():
-    tre = DecisionTreeClassifier(max_depth=5)
+    tre = DecisionTreeClassifier(criterion = 'entropy')
     tre.fit(X_train, Y_train)
     tree_score = tre.predict_proba(X_test)[:,1]
     return tree_score
@@ -70,9 +67,9 @@ sC = stacking_classifier(X_train, Y_train, X_test)
 auc_classifier_knn()
 
 print()
-print("AUC Decision Tree: ", AUC_intervals(Y_test, tree))
 print("AUC Gausian Native Bayes: ", AUC_intervals(Y_test, gaussian))
 print("AUC Logistic Regreesion: ", AUC_intervals(Y_test, log))
+print("AUC Decision Tree: ", AUC_intervals(Y_test, tree))
 print()
 print("AUC Voting Classier hard: ", AUC_intervals(Y_test, votCH))
 print("AUC Voting Classier soft: ", AUC_intervals(Y_test,votS))

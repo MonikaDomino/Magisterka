@@ -13,6 +13,8 @@ X,Y = check_dataset.readDataset_onlineShopeersIntention()
 
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3)
 
+# standarize
+
 scaler= StandardScaler()
 scaler.fit(X_train)
 X_train = scaler.transform(X_train)
@@ -34,7 +36,7 @@ def LogisticRegression_predict():
     return logistic_score
 
 def DecisionTree_classifier_predict():
-    tre = DecisionTreeClassifier(criterion = 'entropy')
+    tre = DecisionTreeClassifier(criterion ='entropy')
     tre.fit(X_train, Y_train)
     tree_score = tre.predict_proba(X_test)[:,1]
     return tree_score

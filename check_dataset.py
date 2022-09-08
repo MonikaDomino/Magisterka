@@ -125,7 +125,7 @@ def readDataset_MHR (): # RiskLevel
     return X, Y
 
 def readDataset_tic_tac_toe ():  # class
-    print("Test for dataset BT")
+    print("Test for dataset tic tac toe")
     print()
 
     mh = pd.read_csv('datasetUCI/tic-tac-toe.data')

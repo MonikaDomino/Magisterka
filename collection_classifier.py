@@ -8,11 +8,11 @@ def create_collection_classifier():
 
     collection = []
 
-    collection.append(('DT', DecisionTreeClassifier(max_depth=3)))
+    collection.append(('DT', DecisionTreeClassifier(criterion='entropy')))
     collection.append(('gb', GaussianNB()))
     collection.append(('lr', LogisticRegression(max_iter=3000)))
 
-    k_neigh = [1, 3, 5, 10, 15, 20, 30]
+    k_neigh = [1, 3, 5, 10, 15, 20, 25, 30]
 
     for j in k_neigh:
         knn_k = KNeighborsClassifier(n_neighbors=j)
@@ -24,9 +24,9 @@ def voting_classifier_hard (X_train, Y_train, X_test):
 
     collection_VCH = create_collection_classifier()
 
-    vot_hard = VotingClassifier(estimators=collection_VCH, voting='soft')
+    vot_hard = VotingClassifier(estimators=collection_VCH, voting='hard')
     vot_hard.fit(X_train, Y_train)
-    pred = vot_hard.predict_proba(X_test)[:,1]
+    pred = vot_hard.predict(X_test)
     return pred
 
 def voting_classifier_soft (X_train, Y_train, X_test):

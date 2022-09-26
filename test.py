@@ -5,11 +5,11 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import StandardScaler
 import check_dataset
-from voting import voting, counter_and_sort, decision_voting_acc, accuracy_voting, sum_acc, decison_voting
+from voting import voting, counter_and_sort, decision_voting_acc, accuracy_voting, sum_acc, decison_voting, auc_roc_voting
 from knn import knn_probability
 from aggregation_function import artimetic_mean, geometric_mean, weighted_average
 
-X,Y = check_dataset.readDataset_onlineShopeersIntention()
+X,Y = check_dataset.readDataset_tic_tac_toe()
 
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3)
 
@@ -68,12 +68,46 @@ mean_a_0 = artimetic_mean(acc_0)
 gmean_a_1 = geometric_mean(acc_1)
 gmean_a_0 = geometric_mean(acc_0)
 
+print()
+
+auc_0 = []
+
+auc_gb_0, auc_gb_1 = auc_roc_voting(voting_gb, Y_test)
+auc_lr_0, auc_lr_1 = auc_roc_voting(voting_lr, Y_test)
+auc_dt_0, auc_dt_1 = auc_roc_voting(voting_dt, Y_test)
+
+auc_0.append(auc_gb_0)
+auc_0.append(auc_dt_0)
+auc_0.append(auc_lr_0)
+
+auc_1 = []
+
+auc_1.append(auc_gb_1)
+auc_1.append(auc_dt_1)
+auc_1.append(auc_lr_1)
+
+sum_1_auc = sum_acc(auc_1)
+sum_0_auc = sum_acc(auc_0)
+
+mean_a_1_auc = artimetic_mean(auc_1)
+mean_a_0_auc = artimetic_mean(auc_0)
+
+gmean_a_1_auc = geometric_mean(auc_1)
+gmean_a_0_auc = geometric_mean(auc_0)
+
+
 print("Metoda 2")
 print()
 
 decision_voting_acc(sum_0, sum_1)
 decision_voting_acc(mean_a_0, mean_a_1)
 decision_voting_acc(gmean_a_0, gmean_a_1)
+
+print()
+
+decision_voting_acc(sum_0_auc, sum_1_auc)
+decision_voting_acc(mean_a_0_auc, mean_a_1_auc)
+decision_voting_acc(gmean_a_0_auc, gmean_a_1_auc)
 
 print()
 # method 3

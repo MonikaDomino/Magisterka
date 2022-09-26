@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.ensemble import VotingClassifier
 from collections import Counter
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, roc_auc_score, auc, roc_curve
 
 
 def voting(X_train, Y_train, X_test, classifier):
@@ -57,6 +57,16 @@ def accuracy_voting(voting, y_test):
     acc_score_1 = accuracy_score(acc_dec_1, y_test.iloc[:acc_dec_len_1])
 
     return acc_score_0, acc_score_1
+
+def auc_roc_voting(voting, y_test):
+    auc_roc_dec_0, auc_roc_dec_1 = counter_and_sort(voting)
+    auc_roc_dec_len_0 = len(auc_roc_dec_0)
+    auc_roc_dec_len_1 = len(auc_roc_dec_1)
+
+    auc_score_0 = roc_auc_score(y_test.iloc[:auc_roc_dec_len_0], auc_roc_dec_0)
+    auc_score_1 = roc_auc_score(y_test.iloc[:auc_roc_dec_len_1], auc_roc_dec_1)
+
+    return auc_score_0, auc_score_1
 
 
 def sum_acc(acc_array):

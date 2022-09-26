@@ -10,7 +10,7 @@ def readDataset_breastCancer():
     print()
     data = pd.read_csv("datasetUCI/cancer_classification.csv")
     #print(data.info())
-    #print(data['benign_0__mal_1'].value_counts())
+    print(data['benign_0__mal_1'].value_counts())
     X = data.drop(columns=['benign_0__mal_1'], axis=1)
     Y = data['benign_0__mal_1']
 
@@ -41,32 +41,7 @@ def readDataset_wine():
 
     return X, Y
 
-# bankonte - class [class]
-def readDataset_bankoteAuthencation():
-    print("Test for dataset banknote")
-    print()
-    banknote = pd.read_csv("datasetUCI/BankNoteAuthentication.csv")
-    #print(banknote.info())
-    X = banknote.drop(columns=['class'], axis=1)
-    Y = banknote['class']
 
-    return X,Y
-
-def readDataset_onlineShopeersIntention():  #class - Revenue
-    print("Test for shoppers intention")
-    print()
-    shoopers = pd.read_csv("datasetUCI/online_shoppers_intention.csv")
-    shoopers = shoopers.drop(['VisitorType'], axis=1)
-    shoopers = shoopers.drop(['Month'], axis=1)
-
-    shoopers['Weekend'] = shoopers['Weekend'].map({False: 0, True: 1})
-    shoopers['Revenue'] = shoopers['Revenue'].map({False: 0, True: 1})
-    #print(shoopers.info())
-
-    X = shoopers.drop(columns=['Revenue'], axis=1)
-    Y = shoopers['Revenue']
-
-    return X,Y
 
 def readDataset_parkinson(): #status - class
     print("Test for dataset parkinson disease")
@@ -91,57 +66,10 @@ def readDataset_diabets(): # class[class]
         ozone[i] = le.fit_transform(ozone[i])
 
     #print(ozone.info())
+    #print(ozone['class'].value_counts())
+
     X = ozone.drop(columns=['class'], axis=1)
     Y = ozone['class']
 
     return X,Y
 
-# audit risk - Risk (Class)
-def readDataset_auditRisk():
-    print("Test for dataset audit risk")
-    print()
-    risk = pd.read_csv('datasetUCI/audit_risk.csv')
-
-    risk['Money_Value'] = risk['Money_Value'].fillna(risk['Money_Value'].mean())
-
-    risk = risk.drop('LOCATION_ID', axis = 1)
-
-    X = risk.drop(columns=['Risk'], axis=1)
-    Y = risk['Risk']
-
-    return X, Y
-
-
-def readDataset_MHR (): # RiskLevel
-    print("Test for dataset MH risk")
-    print()
-
-    mh = pd.read_csv('datasetUCI/Maternal Health Risk Data Set.csv')
-
-    #print(mh.info())
-    X = mh.drop(columns=['RiskLevel'], axis=1)
-    Y = mh['RiskLevel']
-
-    return X, Y
-
-def readDataset_tic_tac_toe ():  # class
-    print("Test for dataset tic tac toe")
-    print()
-
-    mh = pd.read_csv('datasetUCI/tic-tac-toe.data')
-    mh.columns = ['top-left-square', 'top-middle-square', 'top-right-square', 'middle-left-square',
-                  'middle-middle-square', 'middle-right-square', 'bottom-left-square', 'bottom-middle-square', 'bottom-right-square', 'Class']
-    mh.replace('negative', 0, inplace=True)
-    mh.replace('positive', 1, inplace=True)
-
-    #print(mh.info())
-
-    X = pd.get_dummies(mh[['top-left-square', 'top-middle-square', 'top-right-square', 'middle-left-square',
-                  'middle-middle-square', 'middle-right-square', 'bottom-left-square', 'bottom-middle-square', 'bottom-right-square']], drop_first=True)
-
-
-
-   # X = mh.drop(columns=['Class'], axis=1)
-    Y = mh['Class']
-
-    return X,Y

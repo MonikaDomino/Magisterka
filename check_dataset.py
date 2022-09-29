@@ -10,7 +10,7 @@ def readDataset_breastCancer():
     print()
     data = pd.read_csv("datasetUCI/cancer_classification.csv")
     #print(data.info())
-    print(data['benign_0__mal_1'].value_counts())
+    # print(data['benign_0__mal_1'].value_counts())
     X = data.drop(columns=['benign_0__mal_1'], axis=1)
     Y = data['benign_0__mal_1']
 
@@ -23,6 +23,7 @@ def readDataset_heart():
     print()
     data = pd.read_csv("datasetUCI/heart.csv")
     # print(data.info())
+    #print(data['target'].value_counts())
     X = data.drop(columns=['target'], axis=1)
     Y = data['target']
 
@@ -34,8 +35,9 @@ def readDataset_wine():
     print()
     wine = pd.read_csv("datasetUCI/winequality-red.csv", sep=';')
     #print(wine.info())
-    #print(wine['quality'].value_counts()) # - count elements class decision
+    # print(wine['quality'].value_counts()) # - count elements class decision
     wine['quality'] = np.where(wine['quality'] > 6, 1, 0)
+    #print(wine['quality'].value_counts())
     X = wine.drop(columns=['quality'], axis=1)
     Y = wine['quality']
 
@@ -49,6 +51,7 @@ def readDataset_parkinson(): #status - class
     dataset = pd.read_csv('datasetUCI/parkinsons.data')
     dataset.drop('name', axis=1, inplace=True)
     #print(dataset.info)
+    # print(dataset['status'].value_counts())
     X = dataset.drop(columns=['status'], axis=1)
     Y = dataset['status']
 

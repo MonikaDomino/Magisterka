@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.stats.mstats import gmean, hmean
+from scipy.stats.mstats import gmean
 
 
 def artimetic_mean(classifier_score):
@@ -21,8 +21,19 @@ def geometric_mean(classifier_score):
     return geometric
 
 
-def harmonic_mean (classifier_score):
+def sum_acc(acc_array):
+    sum = np.sum(acc_array)
+    return sum
 
-    harmonic = hmean(classifier_score)
+def t_norm_Lukasiewicz(array_acc):
+    sum_array_tn = np.sum(array_acc)
+    sum_1 = sum_array_tn-1
+    max_tnorm = max(sum_1, 0)
 
-    return harmonic
+    return max_tnorm
+
+
+def t_konorm_Lukasiewicz(array_acc):
+    sum_array_tn = np.sum(array_acc)
+    min_tkonorm = min(1, sum_array_tn)
+    return min_tkonorm

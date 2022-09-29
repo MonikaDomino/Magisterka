@@ -1,5 +1,7 @@
+import random
+
 from sklearn.neighbors import KNeighborsClassifier
-from aggregation_function import artimetic_mean, geometric_mean, harmonic_mean
+from aggregation_function import artimetic_mean, geometric_mean
 
 from voting import counter_and_sort
 
@@ -7,8 +9,8 @@ from voting import counter_and_sort
 def knn_pred(k, x_train, y_train, x_test):
     knn = KNeighborsClassifier(n_neighbors=k, metric='euclidean')
     knn.fit(x_train, y_train)
-    knn_p = knn.predict(x_test)
-    return knn_p
+    predicted = knn.predict(x_test[:k])
+    return predicted
 
 
 # probability decisions
@@ -37,7 +39,7 @@ def knn_probability(x_train, y_train, x_test):
     prob_knn_0 = []
     prob_knn_1 = []
 
-    k_neigh = [1, 3, 5, 10, 15, 20, 25, 30]
+    k_neigh = [3, 5, 7, 15, 20,  30]
 
     for i in k_neigh:
         knn_i = knn_pred(i, x_train, y_train, x_test)

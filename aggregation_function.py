@@ -21,7 +21,7 @@ def geometric_mean(classifier_score):
     return geometric
 
 
-def sum_acc(acc_array):
+def sum(acc_array):
     sum = np.sum(acc_array)
     return sum
 

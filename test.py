@@ -1,14 +1,20 @@
 import numpy as np
 import random
+
+import pandas
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import StandardScaler
 import check_dataset
-from knn import knn_probability
-from voting import voting, accuracy_voting, auc_roc_voting, voting_random_element, decision_voting
-from aggregation_function import artimetic_mean, sum_acc,t_norm_Lukasiewicz, t_konorm_Lukasiewicz
+from aggregation_function import sum,t_norm_Lukasiewicz, t_konorm_Lukasiewicz, artimetic_mean
+from knn import decisionkNN_for_random_element, knn_pred, knn_probability, knn_all, accuracy_knn, auc_roc_knn,\
+    sum_knn_decision, artimetic_knn_decision, t_norm_knn, t_konorm_knn, knn_all_random_element
+from voting import accuracy_voting,voting_for_one_classifier, voting_random_element_one_classifier, auc_roc_voting, \
+    sum_voting_decision,artimetic_mean_voting_decison, t_norm_voting_decision, t_konorm_voting_decision, voting_random_element_classifiers, votig_classifier
+
+
 
 X,Y = check_dataset.readDataset_parkinson()
 
@@ -24,132 +30,191 @@ X_test = scaler.transform(X_test)
 
 
 # method 1
-
-print("Naiwny klasyfikator Bayes: ", voting_random_element(X_train,Y_train, X_test, GaussianNB()))
-print("Regresja logistyczna ", voting_random_element(X_train, Y_train, X_test, LogisticRegression()))
-print("Drzewo decyzyjne ", voting_random_element(X_train, Y_train, X_test, DecisionTreeClassifier()))
-
-# method 2
-
-# voting_gb = voting(X_train, Y_train, X_test, GaussianNB())
-# voting_lr = voting(X_train, Y_train, X_test, LogisticRegression())
-# voting_dt = voting(X_train, Y_train, X_test, DecisionTreeClassifier())
-#
-# # ACC decyzji 0 i 1
-#
-# accGB_0, acc_GB_1 = accuracy_voting(voting_gb, Y_test)
-# acc_lr_0, acc_lr_1 = accuracy_voting(voting_lr, Y_test)
-# acc_dt_0, acc_dt_1 = accuracy_voting(voting_dt, Y_test)
-#
-# acc_0 = []
-# acc_0.append(accGB_0)
-# acc_0.append(acc_lr_0)
-# acc_0.append(acc_dt_0)
-#
-# acc_1 = []
-# acc_1.append(acc_GB_1)
-# acc_1.append(acc_lr_1)
-# acc_1.append(acc_dt_1)
-
-
-# print()
-# print("ACC - Naiwny klasyfikator Bayesa dla decyzji 0: ", round(accGB_0,3))
-# print("ACC - Regresja logistyczna dla decyzji 0: ", round(acc_lr_0, 3))
-# print("ACC - Drzewo klasyfikacyjne dla decyzji 0:", round(acc_dt_0, 3))
-# print()
-# print("ACC - Naiwny klasyfikator Bayesa dla decyzji 1: ", round(acc_GB_1,3))
-# print("ACC - Regresja logistyczna dla decyzji 1: ", round(acc_lr_1, 3))
-# print("ACC - Drzewo klasyfikacyjne dla decyzji 1:", round(acc_dt_1, 3))
-#
-#
-# sumACC0 = sum_acc(acc_0)
-# sumACC1 = sum_acc(acc_1)
-#
-# am_ACC0 = artimetic_mean(acc_0)
-# am_ACC1 = artimetic_mean(acc_1)
-#
-# tn_0 = t_norm_Lukasiewicz(acc_0)
-# tn_1 = t_norm_Lukasiewicz(acc_1)
-#
-# tkn_0 = t_konorm_Lukasiewicz(acc_0)
-# tkn_1 = t_konorm_Lukasiewicz(acc_1)
-#
-# print()
-# decision_voting(sumACC0, sumACC1)
-# decision_voting(am_ACC0, am_ACC1)
-# decision_voting(tn_0, tn_1)
-# decision_voting(tkn_0, tkn_1)
-#
-#
-# aucGB_0, auc_GB_1 = auc_roc_voting(voting_gb, Y_test)
-# auc_lr_0, auc_lr_1 = auc_roc_voting(voting_lr, Y_test)
-# auc_dt_0, auc_dt_1 = auc_roc_voting(voting_dt, Y_test)
-#
-# auc_0 = []
-# auc_0.append(aucGB_0)
-# auc_0.append(auc_lr_0)
-# auc_0.append(auc_dt_0)
-#
-# auc_1 = []
-# auc_1.append(auc_GB_1)
-# auc_1.append(auc_lr_1)
-# auc_1.append(auc_dt_1)
-#
-# print()
-# print("AUC - Naiwny klasyfikator Bayesa dla decyzji 0: ", aucGB_0)
-# print("AUC - Regresja logistyczna dla decyzji 0: ", round(auc_lr_0, 3))
-# print("AUC - Drzewo klasyfikacyjne dla decyzji 0:", round(auc_dt_0, 3))
-# print()
-# print("AUC - Naiwny klasyfikator Bayesa dla decyzji 1: ", round(auc_GB_1,3))
-# print("AUC - Regresja logistyczna dla decyzji 1: ", round(auc_lr_1, 3))
-# print("AUC - Drzewo klasyfikacyjne dla decyzji 1:", round(auc_dt_1, 3))
-#
-#
-# sumAUC0 = sum_acc(auc_0)
-# sumAUC1 = sum_acc(auc_1)
-#
-# am_AUC0 = artimetic_mean(auc_0)
-# am_AUC1 = artimetic_mean(auc_1)
-#
-# tn_0_AUC = t_norm_Lukasiewicz(auc_0)
-# tn_1_AUC = t_norm_Lukasiewicz(auc_1)
-#
-# tkn_0_AUC = t_konorm_Lukasiewicz(auc_0)
-# tkn_1_AUC = t_konorm_Lukasiewicz(auc_1)
-#
-# print()
-# decision_voting(sumAUC0, sumAUC1)
-# decision_voting(am_AUC0, am_AUC1)
-# decision_voting(tn_0_AUC, tn_1_AUC)
-# decision_voting(tkn_0_AUC, tkn_1_AUC)
-
-# method 3
-
+print('Metoda 1')
+print()
+print('Dla losowego x:')
+print("Naiwny klasyfikator Bayes: ", voting_random_element_one_classifier(X_train,Y_train, X_test, GaussianNB()))
+print("Regresja logistyczna ", voting_random_element_one_classifier(X_train, Y_train, X_test, LogisticRegression()))
+print("Drzewo decyzyjne ", voting_random_element_one_classifier(X_train, Y_train, X_test, DecisionTreeClassifier()))
 print()
 
-k_0, k_1 = knn_probability(X_train, Y_train, X_test)
-print('Prawdopodobieństwa decyzji 0:')
-print(np.round(k_0,3))
-print('Prawdopodobieństwa decyzji 1:')
-print(np.round(k_1, 3)  )
+print("Dla całego zestawu danych")
+voting_gb = voting_for_one_classifier(X_train, Y_train, X_test, GaussianNB())
+acc_gb = accuracy_voting(voting_gb, Y_test)
+print("Naiwny klasyfikator Bayesa_ACC: ", round(acc_gb, 3))
+voting_lr = voting_for_one_classifier(X_train, Y_train, X_test, LogisticRegression())
+acc_lr = accuracy_voting(voting_lr, Y_test)
+print("Regresja logistyczna_ACC: ", round(acc_lr, 3))
+voting_dt = voting_for_one_classifier(X_train, Y_train, X_test, DecisionTreeClassifier())
+acc_dt = accuracy_voting(voting_dt, Y_test)
+print("Drzewo decyzyjne_ACC: ", round(acc_dt, 3))
+print()
 
-sum_knn0 = sum_acc(k_0)
-sum_knn1 = sum_acc(k_1)
+auc_gb = auc_roc_voting(voting_gb, Y_test)
+print("Naiwny klasyfikator Bayesa AUC: ", round(auc_gb, 3))
+voting_lr = voting_for_one_classifier(X_train, Y_train, X_test, LogisticRegression())
+auc_lr = auc_roc_voting(voting_lr, Y_test)
+print("Regresja logistyczna AUC: ", round(auc_lr, 3))
+voting_dt = voting_for_one_classifier(X_train, Y_train, X_test, DecisionTreeClassifier())
+auc_dt = auc_roc_voting(voting_dt, Y_test)
+print("Drzewo decyzyjne AUC: ", round(auc_dt, 3))
+print()
 
-am_knn0 = artimetic_mean(k_0)
-am_knn1 = artimetic_mean(k_1)
+# naiwny klasyfikator Bayesa
+print('Ostateczne decyzje - Naiwny klasyfikator Bayesa:')
+print('Suma:')
+sum_voting_decision(voting_gb)
+print('Średnia arytmetyczna:')
+artimetic_mean_voting_decison(voting_gb)
+print('T-norma Lukasiewicza:')
+t_norm_voting_decision(voting_gb)
+print('T-konorma Lukasiewicza:')
+t_konorm_voting_decision(voting_gb)
+print()
 
-tn_0_knn = t_norm_Lukasiewicz(k_0)
-tn_1_knn = t_norm_Lukasiewicz(k_1)
+print('Ostateczne decyzje - Regresja logistyczna:')
+print('Suma:')
+sum_voting_decision(voting_lr)
+print('Średnia arytmetyczna:')
+artimetic_mean_voting_decison(voting_lr)
+print('T-norma Lukasiewicza:')
+t_norm_voting_decision(voting_lr)
+print('T-konorma Lukasiewicza:')
+t_konorm_voting_decision(voting_lr)
+print()
 
-tkn_0_knn = t_konorm_Lukasiewicz(k_0)
-tkn_1_knn = t_konorm_Lukasiewicz(k_1)
+print('Ostateczne decyzje - Drzewo decyzyjne:')
+print('Suma:')
+sum_voting_decision(voting_dt)
+print('Średnia arytmetyczna:')
+artimetic_mean_voting_decison(voting_dt)
+print('T-norma Lukasiewicza:')
+t_norm_voting_decision(voting_dt)
+print('T-konorma Lukasiewicza:')
+t_konorm_voting_decision(voting_dt)
 
 print()
-decision_voting(sum_knn0, sum_knn1)
-decision_voting(am_knn0, am_knn1)
-decision_voting(tn_0_knn, tn_1_knn)
-decision_voting(tkn_0_knn, tkn_1_knn)
+print("Metoda 2:")
+#method 2
+print("Decyzja dla losowego obiektu:")
+print(voting_random_element_classifiers(X_train, Y_train, X_test))
+print()
+print("Efektywność ACC i AUC: ")
+acc_2 = accuracy_voting(votig_classifier(X_train, Y_train, X_test), Y_test)
+print(round(acc_2,3))
+auc_2 = auc_roc_voting(votig_classifier(X_train, Y_train, X_test), Y_test)
+print(round(auc_2, 3))
+print()
+
+
+print('Suma:')
+sum_voting_decision(votig_classifier(X_train, Y_train, X_test))
+print('Średnia arytmetyczna:')
+artimetic_mean_voting_decison(votig_classifier(X_train, Y_train, X_test))
+print('T-norma Lukasiewicza:')
+t_norm_voting_decision(votig_classifier(X_train, Y_train, X_test))
+print('T-konorma Lukasiewicza:')
+t_konorm_voting_decision(votig_classifier(X_train, Y_train, X_test))
+print()
+
+print("Metoda 3:")
+print()
+print("Dla losowego elementu dla danego k")
+print("k = 3")
+decisionkNN_for_random_element(3, X_train, Y_train, X_test)
+print("k = 5")
+decisionkNN_for_random_element(5, X_train, Y_train, X_test)
+print("k = 7")
+decisionkNN_for_random_element(7, X_train, Y_train, X_test)
+print("k = 15")
+decisionkNN_for_random_element(15, X_train, Y_train, X_test)
+print("k = 20")
+decisionkNN_for_random_element(20, X_train, Y_train, X_test)
+print("k = 30")
+decisionkNN_for_random_element(30, X_train, Y_train, X_test)
+print()
+knn_3 = knn_pred(3, X_train, Y_train, X_test)
+knn_5 = knn_pred(5, X_train, Y_train, X_test)
+knn_7 = knn_pred(7, X_train, Y_train, X_test)
+knn_15 = knn_pred(15, X_train, Y_train, X_test)
+knn_20 = knn_pred(20, X_train, Y_train, X_test)
+knn_30 = knn_pred(30, X_train, Y_train, X_test)
+print()
+print("ACC dla róznych k")
+print(round(accuracy_voting(knn_3, Y_test),3))
+print(round(accuracy_voting(knn_5, Y_test),3))
+print(round(accuracy_voting(knn_7, Y_test),3))
+print(round(accuracy_voting(knn_15, Y_test),3))
+print(round(accuracy_voting(knn_20, Y_test),3))
+print(round(accuracy_voting(knn_30, Y_test),3))
+
+print()
+print("AUC dla róznych k")
+print(round(auc_roc_voting(knn_3, Y_test),3))
+print(round(auc_roc_voting(knn_5, Y_test),3))
+print(round(auc_roc_voting(knn_7, Y_test),3))
+print(round(auc_roc_voting(knn_15, Y_test),3))
+print(round(auc_roc_voting(knn_20, Y_test),3))
+print(round(auc_roc_voting(knn_30, Y_test),3))
+print()
+k = knn_all(X_train,Y_train, X_test)
+
+print("ACC dla kolekcji klasyfikatorów kNN ")
+# # accuracy for all knn
+print(round(accuracy_knn(k, Y_test), 3))
+print("AUC dla kolekcji klasyfikatorów kNN ")
+# # auc for all knn
+print(round(auc_roc_knn(k, Y_test), 3))
+print()
+sum_knn_decision(X_train, Y_train, X_test)
+artimetic_knn_decision(X_train, Y_train, X_test)
+t_norm_knn(X_train, Y_train, X_test)
+t_konorm_knn(X_train, Y_train, X_test)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

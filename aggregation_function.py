@@ -1,39 +1,23 @@
 import numpy as np
-from scipy.stats.mstats import gmean
+import pandas as pd
+from scipy.stats.mstats import gmean, hmean
+
+def art (classifier_score):
+     df_clas = pd.DataFrame(classifier_score)
+     df_art = df_clas.rolling(3, min_periods = 1).apply(np.mean)
+     return df_art
 
 
-def artimetic_mean(classifier_score):
-
-    mean = np.mean(classifier_score)
-
-    return mean
-
-def weighted_average (classifier_score):
-
-    weighted_avg = np.average(classifier_score)
-
-    return weighted_avg
-
-def geometric_mean(classifier_score):
-
-    geometric = gmean(classifier_score)
-
-    return geometric
+def sum (classifier_score):
+    df_clas = pd.DataFrame(classifier_score)
+    df_sum = df_clas.rolling(3, min_periods=1).agg(np.sum)
+    return df_sum
 
 
-def sum(acc_array):
-    sum = np.sum(acc_array)
-    return sum
 
-def t_norm_Lukasiewicz(array_acc):
-    sum_array_tn = np.sum(array_acc)
-    sum_1 = sum_array_tn-1
-    max_tnorm = max(sum_1, 0)
+def geometric_mean (classifier_score):
 
-    return max_tnorm
+    df_max = pd.DataFrame(classifier_score)
+    df_t_min = df_max.rolling(3, min_periods=1).apply(gmean)
+    return df_t_min
 
-
-def t_konorm_Lukasiewicz(array_acc):
-    sum_array_tn = np.sum(array_acc)
-    min_tkonorm = min(1, sum_array_tn)
-    return min_tkonorm

@@ -4,7 +4,7 @@ import pandas
 
 from sklearn.metrics import accuracy_score, roc_auc_score
 from sklearn.neighbors import KNeighborsClassifier
-from aggregation_function import artimetic_mean, t_norm_Lukasiewicz, t_konorm_Lukasiewicz
+
 from voting import counter_and_sort,decision_voting
 
 
@@ -121,23 +121,23 @@ def sum_knn_decision(X_train, Y_train, X_test):
     sum_1 = sum(p1)
     decision_voting(sum_0, sum_1)
 
-def artimetic_knn_decision(X_train, Y_train, X_test):
-    p0, p1 = knn_probability(X_train, Y_train, X_test)
-    a_0 = artimetic_mean(p0)
-    a_1 = artimetic_mean(p1)
-    decision_voting(a_0, a_1)
-
-def t_norm_knn(X_train, Y_train, X_test):
-    p0, p1 = knn_probability(X_train, Y_train, X_test)
-    tn_0 = t_norm_Lukasiewicz(p0)
-    tn_1 = t_norm_Lukasiewicz(p1)
-    decision_voting(tn_0, tn_1)
-
-def t_konorm_knn(X_train, Y_train, X_test):
-    p0, p1 = knn_probability(X_train, Y_train, X_test)
-    tn_0 = t_norm_Lukasiewicz(p0)
-    tn_1 = t_norm_Lukasiewicz(p1)
-    decision_voting(tn_0, tn_1)
+# def artimetic_knn_decision(X_train, Y_train, X_test):
+#     p0, p1 = knn_probability(X_train, Y_train, X_test)
+#     a_0 = artimetic_mean(p0)
+#     a_1 = artimetic_mean(p1)
+#     decision_voting(a_0, a_1)
+# #
+# def t_norm_knn(X_train, Y_train, X_test):
+#     p0, p1 = knn_probability(X_train, Y_train, X_test)
+#     tn_0 = t_norm_Lukasiewicz(p0)
+#     tn_1 = t_norm_Lukasiewicz(p1)
+#     decision_voting(tn_0, tn_1)
+#
+# def t_konorm_knn(X_train, Y_train, X_test):
+#     p0, p1 = knn_probability(X_train, Y_train, X_test)
+#     tn_0 = t_norm_Lukasiewicz(p0)
+#     tn_1 = t_norm_Lukasiewicz(p1)
+#     decision_voting(tn_0, tn_1)
 
 
 def auc_roc_knn(array_knn, y_test):

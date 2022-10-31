@@ -1,10 +1,4 @@
-import numpy as np
-import random
 
-import pandas
-import pandas as pd
-from sklearn.ensemble import VotingClassifier
-from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
@@ -12,54 +6,64 @@ import check_dataset
 from aggregation_function import art, sum, geometric_mean
 from knn import decisionkNN_for_random_element, knn_pred, knn_probability, knn_all, accuracy_knn, auc_roc_knn,\
     sum_knn_decision, knn_all_random_element
-from voting import accuracy_voting, voting_for_one_classifier, voting_for_oC_random_element, votig_classifier, \
-    auc_roc_voting
+from voting import voting_for_one_classifier_acc, voting_for_oC_random_element, votig_classifier_sum_acc, \
+    votig_classifier_sum_auc, votig_classifier_all_acc, votig_classifier_all_auc, voting_for_one_classifier_auc, \
+    votig_classifier_artimetic_mean_acc, votig_classifier_artimetic_mean_auc, votig_classifier_geometric_mean_acc, \
+    votig_classifier_geometric_mean_auc, voting_for_all_random_element_agregate_sum, \
+    voting_for_all_random_element_agregate_art,voting_for_all_random_element_agregate_geometric
 
 
-X,Y = check_dataset.readDataset_parkinson()
+X,Y = check_dataset.readDataset_diabets()
 
 # method 1
 print('Metoda 1')
 print()
 print('Dla losowego x:')
 print("Naiwny klasyfikator Bayes: ", voting_for_oC_random_element(X, Y, GaussianNB()))
-print("Regresja logistyczna: ", voting_for_oC_random_element(X, Y, LogisticRegression(solver='lbfgs', max_iter=1000)))
+print("Regresja logistyczna: ", voting_for_oC_random_element(X, Y, LogisticRegression(solver='lbfgs', max_iter=10000)))
 print("Drzewo decyzyjne: ", voting_for_oC_random_element(X, Y, DecisionTreeClassifier()))
 print()
-
+#
 print("Dla całego zestawu danych")
-voting_gb = voting_for_one_classifier(X,Y, GaussianNB())
-print("ACC Naiwny klasyfikator Bayesa: ", round(accuracy_voting(voting_gb, Y), 3))
-voting_lr = voting_for_one_classifier(X,Y, LogisticRegression(solver='lbfgs', max_iter=1000))
-print("ACC Regresja logistyczna: ", round(accuracy_voting(voting_lr, Y), 3))
-voting_dt = voting_for_one_classifier(X, Y, DecisionTreeClassifier(random_state=0))
-print("ACC Drzewo decyzyjne: ", round(accuracy_voting(voting_dt, Y), 3))
-voting_all = votig_classifier(X, Y)
-print("ACC kolekcja: ", round(accuracy_voting(voting_all, Y),3))
+voting_gb_acc = voting_for_one_classifier_acc(X,Y, GaussianNB())
+print("ACC Naiwny klasyfikator Bayesa: ", round(voting_gb_acc, 3))
+voting_lr_acc = voting_for_one_classifier_acc(X,Y, LogisticRegression(solver='lbfgs', max_iter=10000))
+print("ACC Regresja logistyczna: ", round(voting_lr_acc,3))
+voting_dt_acc = voting_for_one_classifier_acc(X, Y, DecisionTreeClassifier(random_state=0))
+print("ACC Drzewo decyzyjne: ", round(voting_dt_acc, 3))
+
+
+print("ACC kolekcja: ", round(votig_classifier_all_acc(X,Y),3))
 print()
-
-print("AUC Naiwny klasyfikator Bayesa: ", round(auc_roc_voting(voting_gb, Y), 3))
-print("AUC Regresja logistyczna: ", round(auc_roc_voting(voting_lr, Y), 3))
-print("AUC Drzewo decyzyjne: ", round(auc_roc_voting(voting_dt, Y), 3))
-print("AUC kolekcja: ", round(auc_roc_voting(voting_all, Y),3))
-
+print("AUC Naiwny klasyfikator Bayesa: ", round(voting_for_one_classifier_auc(X, Y, GaussianNB()), 3))
+print("AUC Regresja logistyczna: ", round(voting_for_one_classifier_auc(X, Y, LogisticRegression(solver='lbfgs', max_iter=10000)), 3))
+print("AUC Drzewo decyzyjne: ", round(voting_for_one_classifier_auc(X, Y, DecisionTreeClassifier(random_state=0)), 3))
+0,print("AUC kolekcja: ", round(votig_classifier_all_auc(X, Y),3))
+#
 print()
 print("Metoda 2 - użycie agregacji takich jak suma, średnia arytmetyczna i średnia geometryczna")
+# k = 1
+#
+print('Dla losowego x:')
+print("Suma: ", voting_for_all_random_element_agregate_sum(X,Y))
+print("Średnia arytmetyczna: ", voting_for_all_random_element_agregate_art(X,Y))
+print("Średnia geometryczna: ", voting_for_all_random_element_agregate_geometric(X,Y))
+print()
+
+
 print("Średnia arytmetyczna: ")
-
-
-print("ACC", round(accuracy_voting(art(voting_all)>0.5, Y),3))
-print("AUC", round(auc_roc_voting(art(voting_all)>0.5, Y), 3))
+print("ACC", round(votig_classifier_artimetic_mean_acc(X,Y),3))
+print("AUC", round(votig_classifier_artimetic_mean_auc(X,Y), 3))
 
 print()
-print("Suma: ")
-print("ACC", round(accuracy_voting(sum(voting_all)>0.5, Y),3))
-print("AUC", round(auc_roc_voting(sum(voting_all)>0.5, Y), 3))
+print("Suma:")
+print("ACC:", votig_classifier_sum_acc(X, Y))
+print("AUC:", votig_classifier_sum_auc(X, Y))
 
 print()
 print("Średnia geometryczna: ")
-print("ACC", round(accuracy_voting(geometric_mean(voting_all), Y),3))
-print("AUC", round(auc_roc_voting(geometric_mean(voting_all), Y), 3))
+print("ACC", round(votig_classifier_geometric_mean_acc(X,Y), 3))
+print("AUC", round(votig_classifier_geometric_mean_auc(X,Y), 3))
 
 # print("Metoda 3:")
 # print()

@@ -3,23 +3,58 @@ import numpy as np
 import pandas
 
 from sklearn.metrics import accuracy_score, roc_auc_score
+from sklearn.model_selection import KFold, cross_val_predict
 from sklearn.neighbors import KNeighborsClassifier
 
-from voting import counter_and_sort,decision_voting
+import aggregation_function
+from voting import counter_and_sort, decision_voting
 
 
-
-def knn_pred_random_element(k, x_train, y_train, x_test):
+def knn_pred_random_element(k, X, Y):
     knn = KNeighborsClassifier(n_neighbors=k, metric='euclidean')
-    knn.fit(x_train, y_train)
-    predicted = knn.predict(x_test[:k])
-    return predicted
+    kf = KFold(n_splits=10, shuffle=True)
+    scores = []
 
-def knn_pred(k, x_train, y_train, x_test):
+    for train_index, test_index in kf.split(X):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
+        knn.fit(X_train, Y_train)
+        vote_predict = knn.predict(X_test)
+        scores.append(vote_predict)
+
+    k_number = random.randint(0, len(scores))
+    ar = np.array(scores, dtype=object)
+    return random.choice(ar[k_number - 1])
+
+
+def knn_pred_acc(k, X, Y):
     knn = KNeighborsClassifier(n_neighbors=k, metric='euclidean')
-    knn.fit(x_train, y_train)
-    predicted = knn.predict(x_test)
-    return predicted
+    kf = KFold(n_splits=10, shuffle=True)
+    scores = []
+
+    for train_index, test_index in kf.split(X):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
+        knn.fit(X_train, Y_train)
+        vote_predict = knn.predict(X_test)
+        scores.append(accuracy_knn(vote_predict, Y_test))
+
+    return np.mean(scores)
+
+
+def knn_pred_auc(k, X, Y):
+    knn = KNeighborsClassifier(n_neighbors=k, metric='euclidean')
+    kf = KFold(n_splits=10, shuffle=True)
+    scores = []
+
+    for train_index, test_index in kf.split(X):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
+        knn.fit(X_train, Y_train)
+        vote_predict = knn.predict(X_test)
+        scores.append(auc_roc_knn(vote_predict, Y_test))
+
+    return np.mean(scores)
 
 
 # probability decisions
@@ -36,19 +71,10 @@ def probability_decision_for_one(array_knn):
     prob_1 = numbers_1 / all_decision
     prob_0 = numbers_0 / all_decision
 
-    if(prob_1 > prob_0):
+    if (prob_1 > prob_0):
         print('Decision is 1')
     else:
         print('Decision is 0')
-
-
-
-def decisionkNN_for_random_element(k, x_train, y_train, x_test):
-    array_k = knn_pred_random_element(k, x_train, y_train, x_test)
-    decision = probability_decision_for_one(array_k)
-    return decision
-
-
 
 
 # probability decisions
@@ -67,88 +93,216 @@ def probability_decision(array_knn):
 
     return prob_0, prob_1
 
-# knn probability
-def knn_probability(x_train, y_train, x_test):
-
-    prob_knn_0 = []
-    prob_knn_1 = []
-
-    k_neigh = [3, 5, 7, 15, 20,  30]
-    knn_all = []
-
-    for i in k_neigh:
-        knn_i = knn_pred(i, x_train, y_train, x_test)
-        knn_all.append(knn_i)
-        p_0, p_1 = probability_decision(knn_i)
-        prob_knn_0.append(p_0)
-        prob_knn_1.append(p_1)
-
-
-    return prob_knn_0, prob_knn_1
-
-
-def knn_all (x_train, y_train, x_test):
-    knnA = []
-    k_neigh = [3, 5, 7, 15, 20, 30]
-
-    for i in k_neigh:
-        knn_i = knn_pred(i, x_train, y_train, x_test)
-        for j in knn_i:
-            knnA.append(j)
-
-    knnA = pandas.DataFrame(knnA)
-    return knnA
-
-def knn_all_random_element(x_train, y_train, x_test):
-    knnA_r = []
-    k_neigh = [3, 5, 7, 15, 20, 30]
-    for i in k_neigh:
-        knn_i = knn_pred_random_element(i, x_train, y_train, x_test)
-        for j in knn_i:
-            knnA_r.append(j)
-
-    return knnA_r
-
-
 
 def accuracy_knn(array_knn, y_test):
-    score_acc = accuracy_score(array_knn.iloc[:len(y_test)], y_test)
+    score_acc = accuracy_score(array_knn, y_test)
     return score_acc
-
-def sum_knn_decision(X_train, Y_train, X_test):
-    p0, p1 = knn_probability(X_train, Y_train, X_test)
-    sum_0 = sum(p0)
-    sum_1 = sum(p1)
-    decision_voting(sum_0, sum_1)
-
-# def artimetic_knn_decision(X_train, Y_train, X_test):
-#     p0, p1 = knn_probability(X_train, Y_train, X_test)
-#     a_0 = artimetic_mean(p0)
-#     a_1 = artimetic_mean(p1)
-#     decision_voting(a_0, a_1)
-# #
-# def t_norm_knn(X_train, Y_train, X_test):
-#     p0, p1 = knn_probability(X_train, Y_train, X_test)
-#     tn_0 = t_norm_Lukasiewicz(p0)
-#     tn_1 = t_norm_Lukasiewicz(p1)
-#     decision_voting(tn_0, tn_1)
-#
-# def t_konorm_knn(X_train, Y_train, X_test):
-#     p0, p1 = knn_probability(X_train, Y_train, X_test)
-#     tn_0 = t_norm_Lukasiewicz(p0)
-#     tn_1 = t_norm_Lukasiewicz(p1)
-#     decision_voting(tn_0, tn_1)
 
 
 def auc_roc_knn(array_knn, y_test):
-    auc_score = roc_auc_score(y_test, array_knn.iloc[:len(y_test)])
+    auc_score = roc_auc_score(y_test, array_knn)
     return auc_score
 
 
+def knn_all_acc(X, Y):
+    k_scores = []
+    kf = KFold(n_splits=10, shuffle=True)
+    k_neighbours = [3, 5, 7, 15, 20, 30]
+
+    for train_index, test_index in kf.split(X):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
+
+        for k in k_neighbours:
+            knn = KNeighborsClassifier(n_neighbors=k)
+            knn.fit(X_train, Y_train)
+            predict = knn.predict(X_test)
+            k_scores.append(accuracy_knn(predict, Y_test))
+
+    return np.mean(k_scores)
 
 
+def knn_all_auc(X, Y):
+    k_scores = []
+    kf = KFold(n_splits=10, shuffle=True)
+    k_neighbours = [3, 5, 7, 15, 20, 30]
+
+    for train_index, test_index in kf.split(X):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
+
+        for k in k_neighbours:
+            knn = KNeighborsClassifier(n_neighbors=k)
+            knn.fit(X_train, Y_train)
+            predict = knn.predict(X_test)
+            k_scores.append(auc_roc_knn(predict, Y_test))
+
+    return np.mean(k_scores)
 
 
+def knn_for_all_random_element_agregate(X, Y):
+    k_scores_sum = []
+    k_scores_art = []
+    k_scores_gmean = []
+    kf = KFold(n_splits=10, shuffle=True)
+    k_neighbours = [3, 5, 7, 15, 20, 30]
+
+    for train_index, test_index in kf.split(X):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
+
+        for k in k_neighbours:
+            knn = KNeighborsClassifier(n_neighbors=k)
+            knn.fit(X_train, Y_train)
+            predict = knn.predict(X_test)
+            sum = aggregation_function.sum(predict)
+            k_scores_sum.append(sum)
+
+            art = aggregation_function.art(predict)
+            k_scores_art.append(art)
+
+            gm = aggregation_function.geometric_mean(predict)
+            k_scores_gmean.append(gm)
+
+        k_number_sum = random.randint(0, len(k_scores_sum))
+        s = np.array(k_scores_sum)
+        random_elem_sum = random.choice(s[k_number_sum - 1])
+
+        k_number_art = random.randint(0, len(k_scores_art))
+        a = np.array(k_scores_art)
+        random_elem_art = random.choice(a[k_number_art - 1])
+
+        k_number_gmean = random.randint(0, len(k_scores_gmean))
+        g = np.array(k_scores_gmean)
+        random_elem_gmean = random.choice(g[k_number_gmean - 1])
+
+        return random_elem_sum, random_elem_art, random_elem_gmean
 
 
+def knn_for_all_sum_acc(X, Y):
+    k_acc_sum = []
 
+    kf = KFold(n_splits=10, shuffle=True)
+    k_neighbours = [3, 5, 7, 15, 20, 30]
+
+    for train_index, test_index in kf.split(X):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
+
+        for k in k_neighbours:
+            knn = KNeighborsClassifier(n_neighbors=k)
+            knn.fit(X_train, Y_train)
+            predict = knn.predict(X_test)
+
+            sum = aggregation_function.sum(predict)
+            k_acc_sum.append(accuracy_knn(sum, Y_test))
+
+        sum_acc = np.mean(k_acc_sum)
+
+        return sum_acc
+
+
+def knn_for_all_art_acc(X, Y):
+    k_acc_art = []
+
+    kf = KFold(n_splits=10, shuffle=True)
+    k_neighbours = [3, 5, 7, 15, 20, 30]
+
+    for train_index, test_index in kf.split(X):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
+
+        for k in k_neighbours:
+            knn = KNeighborsClassifier(n_neighbors=k)
+            knn.fit(X_train, Y_train)
+            predict = knn.predict(X_test)
+
+            art = aggregation_function.art(predict)
+            k_acc_art.append(accuracy_knn(art, Y_test))
+
+        return np.mean(k_acc_art)
+
+
+def knn_for_all_gmean_acc(X, Y):
+    k_acc_gmean = []
+
+    kf = KFold(n_splits=10, shuffle=True)
+    k_neighbours = [3, 5, 7, 15, 20, 30]
+
+    for train_index, test_index in kf.split(X):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
+
+        for k in k_neighbours:
+            knn = KNeighborsClassifier(n_neighbors=k)
+            knn.fit(X_train, Y_train)
+            predict = knn.predict(X_test)
+
+            art = aggregation_function.geometric_mean(predict)
+            k_acc_gmean.append(accuracy_knn(art, Y_test))
+
+        return np.mean(k_acc_gmean)
+
+def knn_for_all_sum_auc(X, Y):
+    k_acc_sum = []
+
+    kf = KFold(n_splits=10, shuffle=True)
+    k_neighbours = [3, 5, 7, 15, 20, 30]
+
+    for train_index, test_index in kf.split(X):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
+
+        for k in k_neighbours:
+            knn = KNeighborsClassifier(n_neighbors=k)
+            knn.fit(X_train, Y_train)
+            predict = knn.predict(X_test)
+
+            sum = aggregation_function.sum(predict)
+            k_acc_sum.append(auc_roc_knn(sum, Y_test))
+
+        sum_acc = np.mean(k_acc_sum)
+
+        return sum_acc
+
+
+def knn_for_all_art_auc(X, Y):
+    k_acc_art = []
+
+    kf = KFold(n_splits=10, shuffle=True)
+    k_neighbours = [3, 5, 7, 15, 20, 30]
+
+    for train_index, test_index in kf.split(X):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
+
+        for k in k_neighbours:
+            knn = KNeighborsClassifier(n_neighbors=k)
+            knn.fit(X_train, Y_train)
+            predict = knn.predict(X_test)
+
+            art = aggregation_function.art(predict)
+            k_acc_art.append(auc_roc_knn(art, Y_test))
+
+        return np.mean(k_acc_art)
+
+
+def knn_for_all_gmean_auc(X, Y):
+    k_acc_gmean = []
+
+    kf = KFold(n_splits=10, shuffle=True)
+    k_neighbours = [3, 5, 7, 15, 20, 30]
+
+    for train_index, test_index in kf.split(X):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
+
+        for k in k_neighbours:
+            knn = KNeighborsClassifier(n_neighbors=k)
+            knn.fit(X_train, Y_train)
+            predict = knn.predict(X_test)
+
+            art = aggregation_function.geometric_mean(predict)
+            k_acc_gmean.append(auc_roc_knn(art, Y_test))
+
+        return np.mean(k_acc_gmean)

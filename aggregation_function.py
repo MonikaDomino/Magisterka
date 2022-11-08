@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from scipy.stats.mstats import gmean
+from scipy.stats.mstats import gmean, hmean
 
 def art (classifier_score):
     df_clas = pd.DataFrame(classifier_score)
@@ -8,9 +8,9 @@ def art (classifier_score):
     return df_art
 
 
-def sum (classifier_score):
+def harmonic_mean (classifier_score):
     df_clas = pd.DataFrame(classifier_score)
-    df_sum = df_clas.rolling(1).agg(np.sum)
+    df_sum = df_clas.rolling(1).apply(hmean)
     return df_sum
 
 

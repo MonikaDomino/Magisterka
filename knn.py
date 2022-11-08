@@ -19,7 +19,7 @@ def knn_pred_random_element(k, X, Y):
         X_train, X_test = X.iloc[train_index], X.iloc[test_index]
         Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
         knn.fit(X_train, Y_train)
-        vote_predict = knn.predict(X_test)
+        vote_predict = knn.predict(X_test[:k])
         scores.append(vote_predict)
 
     k_number = random.randint(0, len(scores))
@@ -155,7 +155,7 @@ def knn_for_all_random_element_agregate(X, Y):
             knn = KNeighborsClassifier(n_neighbors=k)
             knn.fit(X_train, Y_train)
             predict = knn.predict(X_test)
-            sum = aggregation_function.sum(predict)
+            sum = aggregation_function.harmonic_mean(predict)
             k_scores_sum.append(sum)
 
             art = aggregation_function.art(predict)
@@ -194,7 +194,7 @@ def knn_for_all_sum_acc(X, Y):
             knn.fit(X_train, Y_train)
             predict = knn.predict(X_test)
 
-            sum = aggregation_function.sum(predict)
+            sum = aggregation_function.harmonic_mean(predict)
             k_acc_sum.append(accuracy_knn(sum, Y_test))
 
         sum_acc = np.mean(k_acc_sum)
@@ -258,7 +258,7 @@ def knn_for_all_sum_auc(X, Y):
             knn.fit(X_train, Y_train)
             predict = knn.predict(X_test)
 
-            sum = aggregation_function.sum(predict)
+            sum = aggregation_function.harmonic_mean(predict)
             k_acc_sum.append(auc_roc_knn(sum, Y_test))
 
         sum_acc = np.mean(k_acc_sum)

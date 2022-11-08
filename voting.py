@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import VotingClassifier
 from sklearn.metrics import accuracy_score, roc_auc_score
-from sklearn.model_selection import cross_val_predict, train_test_split, KFold, RepeatedKFold, cross_val_score
+from sklearn.model_selection import KFold
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -59,7 +59,7 @@ def votig_classifier_all_auc(X, Y):
 
     return round(np.mean(scores_auc), 3)
 
-def votig_classifier_sum_acc(X, Y):
+def votig_classifier_harMean_acc(X, Y):
 
     kf = KFold(n_splits=10, shuffle=True)
     vote = voting_classifier_all()
@@ -70,12 +70,12 @@ def votig_classifier_sum_acc(X, Y):
         Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
         vote.fit(X_train, Y_train)
         vote_predict = vote.predict(X_test)
-        sum_acc = aggregation_function.sum(vote_predict)
+        sum_acc = aggregation_function.harmonic_mean(vote_predict)
         scores_acc.append(accuracy_voting(Y_test, sum_acc))
 
     return round(np.mean(scores_acc), 3)
 
-def votig_classifier_sum_auc(X, Y):
+def votig_classifier_harm_auc(X, Y):
 
     vote_auc = voting_classifier_all()
     kf = KFold(n_splits=10, shuffle=True)
@@ -86,7 +86,7 @@ def votig_classifier_sum_auc(X, Y):
         Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
         vote_auc.fit(X_train, Y_train)
         vote_predict = vote_auc.predict(X_test)
-        sum_acc = aggregation_function.sum(vote_predict)
+        sum_acc = aggregation_function.harmonic_mean(vote_predict)
         scores.append(auc_roc_voting(Y_test, sum_acc))
 
     return round(np.mean(scores), 3)
@@ -210,7 +210,7 @@ def voting_for_all_random_element_agregate_sum (X, Y):
         Y_train, Y_test = Y.iloc[train_index], Y.iloc[test_index]
         vote.fit(X_train, Y_train)
         vote_predict = vote.predict(X_test)
-        sum_acc = aggregation_function.geometric_mean(vote_predict)
+        sum_acc = aggregation_function.harmonic_mean(vote_predict)
 
         scores_sum.append(sum_acc)
         k_number = random.randint(0, len(scores_sum))
